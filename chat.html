@@ -1,0 +1,380 @@
+<!doctype html>
+<html>
+  <head>
+    <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/frameworks-5b61aadc846f0818981ceec31b49c475fb084c163fdec5efbc2c21ef539092a9.css" integrity="sha256-W2Gq3IRvCBiYHO7DG0nEdfsITBY/3sXvvCwh71OQkqk=" media="all" rel="stylesheet" />
+  
+    <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/github-18e408730b445250c6b2e6957082a5f47839ae1d010edac9a36e8c72ea408afb.css" integrity="sha256-GOQIcwtEUlDGsuaVcIKl9Hg5rh0BDtrJo26McupAivs=" media="all" rel="stylesheet" />
+
+    <title>Chat on LINE</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 20px Helvetica, Arial; }
+      form { background: #8ac7db; padding: 15px 10px; position: relatve; bottom: 1px; left : 1px; right :1px; width: 100%; height: 150px; }
+      form textarea { position: absolute; resize: none; background: #FBFFFD; border: 0; padding: 5px; width: 80%; height: 120px; }
+      div.user_unread { width: 90%; height: 105px; background: #98e698; margin: 10px 5%; }
+      div.user_read { width: 90%; height: 105px; background: #b3b3b3; margin: 10px 5%; }
+      div.user_name { width: 100%; height: 30px; background: transparent; padding: 8px 5%; overflow: hidden; }
+      div.user_unread_msg { width: 90%; margin: 0 5%; height: 50px; background: #80ff80; padding: 0; overflow: hidden; }
+      div.user_read_msg { width: 90%; margin: 0 5%; height: 50px; background: #d9d9d9; padding: 0; overflow: hidden; }
+      div.user_time { width: 100%; height: 25px; background: transparent; padding: 0 5%; overflow: hidden; text-align: right; }
+      div.msg_box { position: relative; width: auto; height: 85vh; padding: 10px; overflow-x: hidden; overflow-y: scroll; }
+      div.msg_my { width: 40%; background: #6699ff; margin: 10px 3% 10px 57%; padding: 0 0 6px 0; }
+      div.msg_your { width: 40%; background: #b1dae7; margin: 10px 57% 10px 3%; padding: 0 0 6px 0; }
+      div.msg_name { width: 100%; height: 30px; background: transparent; padding: 8px 5%; overflow: hidden; }
+      div.msg_my_msg { width: 97%; margin: 0 1.5%; background: #1a66ff; padding: 3px; }
+      div.msg_your_msg { width: 97%; margin: 0 1.5%; background: #ebf6f9; padding: 3px; }
+      div.msg_inner_msg { width: 100%; margin: 0 0; background: transparent; padding: 3px; }
+      div.msg_time { width: 100%; height: 25px; background: transparent; padding: 2px 5%; overflow: hidden; text-align: right; }
+      h { font-family: Arial, Verdana, Sans-serif; }
+      h.user_online { font-size: 16px; color: blue; }
+      h.user_offline { font-size: 16px; color: black; }
+      h.user_name_text { font-size: 16px; }
+      h.user_msg_text { font-size: 14px; }
+      h.user_time_text { font-size: 12px; }
+      h.msg_my_name_text { font-size: 16px; color: #f2f2f2; }
+      h.msg_my_msg_text { font-size: 16px; color: #f2f2f2; }
+      h.msg_my_time_text { font-size: 12px; color: #f2f2f2; }
+      h.msg_your_name_text { font-size: 16px; color: 0; }
+      h.msg_your_msg_text { font-size: 16px; color: 0; }
+      h.msg_your_time_text { font-size: 12px; color: 0; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #messages { margin-bottom: 40px }
+    </style>
+  </head>
+
+  <body>
+    <div id="all" class="shelf intro-shelf js-notice" style="height: 100vh; padding: 0; margin: 0;">
+      <div class="container" style="position: absolute; width: 25%; height: 50vh; left: 0;">
+        <div style="height: 40px; background: #8ac7db">
+           <h class="shelf-title" style="position: absolute; width: 100%; height: 5vh; text-align: center; vertical-align: middle; padding: 0.5vh 10px; font-size: 26px;">Online Friends</h>
+        </div>
+        <div id="userbox" style="overflow-x: hidden; overflow-y: scroll;"></div>
+        <script>
+           (function() {
+             var element = document.getElementById("userbox");
+             element.style.height = (window.innerHeight / 2 - 40) + "px";
+             console.log(element.style.height);
+           })();
+        </script>
+      </div>
+
+      <div class="container" style="position: absolute; width: 25%; height: 50vh; left: 0; top: 50vh;">
+        <div style="height: 40px; background: #8ac7db">
+           <h class="shelf-title" style="position: absolute; width: 100%; height: 5vh; text-align: center; vertical-align: middle; padding: 0.5vh 10px; font-size: 26px;">Groups</h>
+        </div>
+        <div id="groupbox" style="overflow-x: hidden; overflow-y: scroll;">
+        </div>
+        <script>
+           (function() {
+             var element = document.getElementById("groupbox");
+             element.style.height = (window.innerHeight / 2 - 40) + "px";
+             console.log(element.style.height);
+           })();
+        </script>
+      </div>
+
+      <div id="msg_container" class="container" style="position: absolute; width: 75%; margin-left: 25%;">
+        <div id="dummy" class="msg_box" style="height: 0;">
+        </div>
+
+        <form id="form" action="" style="display:none;">
+            <textarea id="m" autocomplete="off" placeholder="Type some messages..."/></textarea>
+
+            <div style ="position: absolute; width: 20%; left: 80%; height: 60px; bottom: 70px; padding: 0 10px;">
+              <button id="button" class="btn btn-primary shelf-cta" style="width: 80%; height: 45px; margin: 0px 10%; padding: 10px 40px;">SEND</button>
+            </div>
+            <div style ="position: absolute; width: 20%; left: 80%; height: 60px; bottom: 10px; padding: 0 10px;">
+              <button id="clear_button" onclick="clearmsg()" class="btn shelf-cta ml-3 " style="width: 80%; height: 45px; margin: 0px 10%; padding: 10px 40px;">CLEAR</button>
+            </div>
+              
+            </div>
+        </form>
+      </div>
+    </div>
+
+    <a href="/login" class="btn btn-primary shelf-cta" style="position: absolute; right: 20px; top: 0; width: auto; padding: 10px 5px; font-size: 12px;" >LOGOUT</a>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+    <script>
+      var id = sessionStorage.getItem("account");
+      var key = sessionStorage.getItem("key");
+      var socket = io();
+      var userbox = document.getElementById("userbox");
+      var msgbox = null;
+
+      function clearmsg() { 
+        $("#m").val("");
+      }
+
+      function timetostring(time) {
+        if(time == null) return "";
+        time = new Date(time);
+        var today = new Date();
+        var y = time.getFullYear();
+        var m = Number(time.getMonth()) + 1;
+        var d = time.getDate();
+        var hh = time.getHours();
+        var mm = time.getMinutes();
+        var ss = time.getSeconds();
+        var str = "";
+        if(y < today.getFullYear())
+          return y + "/" + (m<=9? "0"+m: m) + "/" + (d<=9? "0"+d: d) + " " +
+                 (hh<=9? "0"+hh: hh) + ":" + (mm<=9? "0"+mm: mm) + ":" + (ss<=9? "0"+ss: ss);
+        else if(m < Number(today.getMonth()) + 1 || d < today.getDate())
+          return (m<=9? "0"+m: m) + "/" + (d<=9? "0"+d: d) + " " +
+                 (hh<=9? "0"+hh: hh) + ":" + (mm<=9? "0"+mm: mm) + ":" + (ss<=9? "0"+ss: ss);
+        else return (hh<=9? "0"+hh: hh) + ":" + (mm<=9? "0"+mm: mm) + ":" + (ss<=9? "0"+ss: ss);
+      }
+
+      socket.emit("login verify", id, key);
+
+      socket.on("login verify", function(valid, initonline, initgroups) {
+        if(valid == "invalid") window.location = "/login";
+
+        for(i in initonline) addOnlineUser(initonline[i]);
+      });
+
+      socket.on("refresh online user", function(instruction, data) {
+        switch(instruction)
+        {
+          case "online":
+            (function() {
+              var obj = document.getElementById("user state " + data.username);
+              if(data.state) obj.className = "user_online";
+              else obj.className = "user_offline";
+            })();
+            break;
+
+          case "add":
+            (function() {
+              var obj = document.getElementById("user entry " + data.username);
+              if(obj != null) obj.parentNode.removeChild(obj);
+              addOnlineUser(data, "end");
+            })();
+            break;
+
+          case "chat":
+            (function() {
+              var obj = document.getElementById("user entry " + data.username);
+              var parent = obj.parentNode;
+              parent.removeChild(obj);
+              parent.insertBefore(obj, parent.childNodes[0]);
+              parent.scrollTop = 0;
+              var old = obj.style.border;
+              if(data.isread) obj.className = "user_read";
+              else obj.className = "user_unread";
+              obj.border = old;
+              var obj = document.getElementById("user msg box " + data.username);
+              if(data.isread) obj.className = "user_read_msg";
+              else obj.className = "user_unread_msg";
+              document.getElementById("user msg text " + data.username).innerHTML = data.msg;
+              document.getElementById("user time text " + data.username).innerHTML = timetostring(data.time);
+            })();
+            break;
+        }
+      });
+
+      socket.on("private update", function(username, start, end) {
+        box = document.getElementById("private msg box " + username);
+        if(box != null)
+          for(i = start; i < end; ++i) {
+            var obj = document.getElementById("private msg box " + username + " time text " + i);
+            obj.innerHTML = obj.innerHTML + " (read)";
+          }
+      });
+
+      socket.on("private on", function(chatlog, start) {
+        for(i in chatlog)
+          if(chatlog[i].username == id && i < start) addNewMsg(msgbox, chatlog[i], " (read)");
+          else addNewMsg(msgbox, chatlog[i], "");
+      });
+
+      socket.on("private add", function(username, chat, isread) {
+        box = document.getElementById("private msg box " + username);
+        if(box != null)
+          if(isread) addNewMsg(box, chat, " (read)");
+          else addNewMsg(box, chat, "");
+      });
+
+      function addOnlineUser(newUser, position) {
+        var newUserEntry = document.createElement("div");
+        newUserEntry.id = "user entry " + newUser.username;
+        if(newUser.newmsg) newUserEntry.className = "user_unread";
+        else newUserEntry.className = "user_read";
+        newUserEntry.onclick = function currentPrivateGroup() {
+
+          document.getElementById("form").style.display = "block";
+          newUserEntry.className = "user_read";
+          userMsgBox.className = "user_read_msg";
+
+          document.getElementById("dummy").style.display = "none";
+          if(msgbox != null) {
+            document.getElementById("user entry " + msgbox.id.split(" ")[3]).style.border = "none";
+            msgbox.style.display = "none";
+          }
+
+          document.getElementById("user entry " + newUser.username).style.border = "solid";
+          document.getElementById("user entry " + newUser.username).style.borderColor = "red";
+
+          msgbox = document.getElementById("private msg box " + newUser.username);
+          if(msgbox == null)
+          {
+            msgbox = document.createElement("div");
+            msgbox.id = "private msg box " + newUser.username;
+            msgbox.className = "msg_box";
+            msgbox.style.height = (window.innerHeight - 150) + "px";
+            document.getElementById("msg_container").insertBefore(msgbox, document.getElementById("msg_container").childNodes[0]);
+
+            socket.emit("private on", newUser.username);
+            
+          }
+          else {
+            socket.emit("private on", newUser.username, "noreturn");
+            msgbox.style.display = "block";
+          }
+
+          msgbox.scrollTop = msgbox.scrollHeight;
+          $("#m").val("");
+
+        }
+        if(position == "end") userbox.appendChild(newUserEntry);
+        else userbox.insertBefore(newUserEntry, userbox.childNodes[0]);
+
+        var userNameBox = document.createElement("div");
+        userNameBox.id = "user name box " + newUser.username;
+        userNameBox.className = "user_name";
+        newUserEntry.appendChild(userNameBox);
+
+        var userState = document.createElement("h");
+        userState.id = "user state " + newUser.username;
+        if(newUser.online) userState.className = "user_online";
+        else userState.className = "user_offline";
+        userState.innerHTML = "◉ "
+        userNameBox.appendChild(userState);
+
+        var userNameText = document.createElement("h");
+        userNameText.id = "user name text " + newUser.username;
+        userNameText.className = "user_name_text";
+        userNameText.innerHTML = newUser.username;
+        userNameBox.appendChild(userNameText);
+
+        var userMsgBox = document.createElement("div");
+        userMsgBox.id = "user msg box " + newUser.username;
+        if(newUser.newmsg) userMsgBox.className = "user_unread_msg";
+        else userMsgBox.className = "user_read_msg";
+        newUserEntry.appendChild(userMsgBox);
+
+        var userMsgText = document.createElement("h");
+        userMsgText.id = "user msg text " + newUser.username;
+        userMsgText.className = "user_msg_text";
+        userMsgText.innerHTML = newUser.msg;
+        userMsgBox.appendChild(userMsgText);
+
+        var userTimeBox = document.createElement("div");
+        userTimeBox.id = "user time box " + newUser.username;
+        userTimeBox.className = "user_time";
+        newUserEntry.appendChild(userTimeBox);
+
+        var userTimeText = document.createElement("h");
+        userTimeText.id = "user time text " + newUser.username;
+        userTimeText.className = "user_time_text";
+        userTimeText.innerHTML = timetostring(newUser.time);
+        userTimeBox.appendChild(userTimeText);
+      }
+
+      function addNewMsg(box, {"username": username, "msg": msg, "time": time}, isread, test) {
+        var no = box.childNodes.length;
+        var newMsgEntry = document.createElement("div");
+        newMsgEntry.id = box.id + " " + no;
+        if(username == id) newMsgEntry.className = "msg_my";
+        else newMsgEntry.className = "msg_your";
+        box.appendChild(newMsgEntry);
+
+        var msgNameBox = document.createElement("div");
+        msgNameBox.id = box.id + " name " + no;
+        msgNameBox.className = "msg_name";
+        newMsgEntry.appendChild(msgNameBox);
+
+        var msgNameText = document.createElement("h");
+        msgNameText.id = box.id + " name text " + no;
+        if(username == id) msgNameText.className = "msg_my_name_text";
+        else msgNameText.className = "msg_your_name_text";
+        msgNameText.innerHTML = username;
+        msgNameBox.appendChild(msgNameText);
+
+        var msgMsgBox = document.createElement("div");
+        msgMsgBox.id = box.id + " msg " + no;
+        if(username == id) msgMsgBox.className = "msg_my_msg";
+        else msgMsgBox.className = "msg_your_msg";
+        newMsgEntry.appendChild(msgMsgBox);
+
+        msg = msg.split("\n");
+        for(i in msg) {
+          var msgMsgInnerBox = document.createElement("div");
+          msgMsgInnerBox.id = box.id + " msg inner " + no + "-" + i;
+          msgMsgInnerBox.className = "msg_inner_msg";
+          msgMsgBox.appendChild(msgMsgInnerBox);
+
+          var msgMsgText = document.createElement("h");
+          msgMsgText.id = box.id + " msg text " + no + "-" + i;
+          if(username == id) msgMsgText.className = "msg_my_msg_text";
+          else msgMsgText.className = "msg_your_msg_text";
+          msgMsgText.innerHTML = msg[i] + String.fromCharCode(13);;
+          msgMsgInnerBox.appendChild(msgMsgText);
+        }
+
+        var msgTimeBox = document.createElement("div");
+        msgTimeBox.id = box.id + " time " + no;
+        msgTimeBox.className = "msg_time";
+        msgMsgBox.appendChild(msgTimeBox);
+
+        var msgTimeText = document.createElement("h");
+        msgTimeText.id = box.id + " time text " + no;
+        if(username == id) msgTimeText.className = "msg_my_time_text";
+        else msgTimeText.className = "msg_your_time_text";
+        msgTimeText.innerHTML = timetostring(time) + isread;
+        msgTimeBox.appendChild(msgTimeText);
+
+        box.scrollTop = box.scrollHeight;
+      }
+
+      $("#m").keydown(function(event) {
+        if(event.keyCode == 13) {
+          var x = $("#m").val();
+          x[x.length - 1] = 0;
+          $("#m").val(x);
+          if(event.shiftKey)
+            $("#m").val($("#m").val() + "\n");
+          else
+            $("form").submit();
+          return false;
+        }
+      });
+
+      $(function () {
+        if(id == null) window.location = "/login";
+
+        $("form").submit(function(){
+          if(msgbox != null)
+          {
+            var str = msgbox.id.split(" ");
+            if(str[0] == "private") {
+              var msg = $("#m").val();
+              var empty = true;
+              for(i in msg)
+                if(msg[i] != " " && msg[i] != "\n") empty = false;
+              if(!empty) socket.emit("private chat message", str[3], $("#m").val());
+            }
+            $("#m").val("");
+          }
+          return false;
+        });
+      });
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,295 @@
+<!doctype html>
+<html>
+
+  <head>
+    <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/frameworks-5b61aadc846f0818981ceec31b49c475fb084c163fdec5efbc2c21ef539092a9.css" integrity="sha256-W2Gq3IRvCBiYHO7DG0nEdfsITBY/3sXvvCwh71OQkqk=" media="all" rel="stylesheet" />  
+    <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/github-18e408730b445250c6b2e6957082a5f47839ae1d010edac9a36e8c72ea408afb.css" integrity="sha256-GOQIcwtEUlDGsuaVcIKl9Hg5rh0BDtrJo26McupAivs=" media="all" rel="stylesheet" />
+
+    <style>
+      div.vercont { height: 50px; width: 100%; }
+      div.abs { position: absolute; height: 50px; }
+      div.rel { position: relative; height: 50px; }
+      div.inner { position:relative; height:30px; top:10px; vertical-align: middle; text-align:left; }
+      h.msgbox { display: inline; font-size: 20px; }
+      form input { background: #FBFFFD; border: 0; padding: 15px; width: 50%; }
+    </style>
+ 
+    <title>Chat on LINE - Registration</title>
+  </head>
+
+
+  <body>
+
+    <div class="shelf intro-shelf js-notice" style="width: 100%">
+      <div class="container">
+        <div class="shelf-content">
+          <h class="shelf-title">LET'S CHAT</h>
+          <p></p>
+
+          <h class="shelf-title">REGISTRATION</h>
+          <p></p>
+
+          <form  action="">
+            <div class="vercont">
+              <div class="abs" style="width: 15%; left: 20%;">
+                <div class="inner">
+                  <h class="msgbox">Account: </h>
+                </div>
+              </div>
+
+              <div class="abs" style="width: 30%; left: 35%;">
+                <input id="account" style="width: 100%;" autocomplete="off" placeholder="Account"/>
+              </div>
+
+              <div class="abs" style="width: 15%; left: 65%;">
+                <a id="check account" onclick="check_account()" style="width: 80%; padding: 10px; margin: 5px;" class="btn shelf-cta ml-3 ">check</a>
+              </div>
+
+              <div class="rel" style="width: 30%; left: 90%;">
+                <div class="inner">
+                  <h id="valid msg" class="msgbox"></h>
+                </div>
+              </div>
+            </div>
+            <p></p>
+
+
+            <div class="vercont">
+              <div class="abs" style="width: 15%; left: 20%;">
+                <div class="inner">
+                  <h class="msgbox">Password: </h>
+                </div>
+              </div>
+
+              <div class="abs" style="width: 30%; left: 35%;">
+                <input id="password1" onkeyup="check_password(); return false;"style="width: 100%;" type="password" autocomplete="off" placeholder="Password"/>
+              </div>
+
+              <div class="abs" style="width: auto; left: 70%;">
+                <div class="inner">
+                  <h id="password empty msg" style="color: red;" class="msgbox"></h>
+                </div>
+              </div>
+            </div>
+            <p></p>
+
+
+            <div class="vercont">
+              <div class="abs" style="width: 15%; left: 20%;"></div>
+
+              <div class="abs" style="width: 30%; left: 35%;">
+                <input id="password2" onkeyup="check_password(); return false;" style="width: 100%;" type="password" autocomplete="off" placeholder="type your password again"/>
+              </div>
+
+              <div class="abs" style="width: auto; left: 70%;">
+                <div class="inner">
+                  <h id="password msg" class="msgbox"></h>
+                </div>
+              </div>
+            </div>
+            <p></p>
+
+            <div class="vercont">
+              <div class="abs" style="width: 15%; left: 20%;">
+                <div class="inner">
+                  <h class="msgbox">Email: </h>
+                </div>
+              </div>
+
+              <div class="abs" style="width: 30%; left: 35%;">
+                <input id="email" style="width: 100%;" autocomplete="off" placeholder="Email"/>
+              </div>
+
+              <div class="abs" style="width: auto; left: 70%;">
+                <div class="inner">
+                  <h id="email msg" style="color: red;" class="msgbox"></h>
+                </div>
+              </div>
+            </div>
+            <p></p>
+
+            <div class="vercont">
+              <div class="abs" style="width: 10%; left: 25%; text-align: center; vertical-align: middle; ">
+                <input id="checkbox1" type="radio" name="robot" style="height: 25px; margin: 13px 0;">
+              </div>
+
+              <div class="abs" style="width: auto; left: 35%; text-align:left;">
+                <div class="inner">
+                  <h id="checkbox msg1" class="msgbox"></h>
+                </div>
+              </div>
+            </div>
+
+            <div class="vercont">
+              <div class="abs" style="width: 10%; left: 25%; text-align: center; vertical-align: middle; ">
+                <input id="checkbox2" type="radio" name="robot" style="height: 25px; margin: 13px 0;">
+              </div>
+
+              <div class="abs" style="width: auto; left: 35%; text-align:left;">
+                <div class="inner">
+                  <h id="checkbox msg2" class="msgbox"></h>
+                </div>
+              </div>
+            </div>
+
+            <div class="vercont">
+              <div class="abs" style="width: 10%; left: 25%; text-align: center; vertical-align: middle; ">
+                <input id="checkbox3" type="radio" name="robot" style="height: 25px; margin: 13px 0;">
+              </div>
+
+              <div class="abs" style="width: auto; left: 35%; text-align:left;">
+                <div class="inner">
+                  <h id="checkbox msg3" class="msgbox"></h>
+                </div>
+              </div>
+            </div>
+
+            <div class="vercont">
+              <div class="abs" style="width: 10%; left: 25%; text-align: center; vertical-align: middle; ">
+                <input id="checkbox4" type="radio" name="robot" style="height: 25px; margin: 13px 0;">
+              </div>
+
+              <div class="abs" style="width: auto; left: 35%; text-align:left;">
+                <div class="inner">
+                  <h id="checkbox msg4" class="msgbox"></h>
+                </div>
+              </div>
+            </div>
+            <p></p>
+            
+            <div id="robotbox" style="display:none;">
+              <h style="color: red; font-size: 20px;">You are a robot!!!</h>
+            </div>
+
+          </form>
+          <p></p>
+
+          <a href="/login" class="btn shelf-cta ml-3" >Cancel</a>
+          <a onclick="reg()" class="btn btn-primary shelf-cta" >Registrate</a>
+
+        </div> 
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+    <script>
+      sessionStorage.clear();
+      var socket = io();
+
+      socket.emit("robot", "");
+
+      socket.on("robot", function(text) {
+        for(i=1; i<=4; ++i)
+          document.getElementById("checkbox msg" + i).innerHTML = text[i-1];
+      });
+      
+      sessionStorage.setItem("pass2 clicked", "false");
+
+      function check_account() {
+        socket.removeAllListeners();
+        socket.emit("check account", $("#account").val());
+
+        socket.on("check account", function(valid){
+          var msg_box = document.getElementById("valid msg");
+          switch(valid)
+          {
+            case "valid":
+              msg_box.style.color = "green";
+              msg_box.innerHTML = "valid account";
+              break;
+
+            case "invalid":
+              msg_box.style.color = "red";
+              msg_box.innerHTML = "account has been used";
+              break;
+
+            case "empty":
+              msg_box.style.color = "red";
+              msg_box.innerHTML = "account cannot be empty";
+              break;
+          }
+        });
+      }
+
+      function check_password() {
+        var pass1 = document.getElementById("password1");
+        var pass2 = document.getElementById("password2");
+        var msg_box = document.getElementById("password msg");
+
+        if(sessionStorage.getItem("pass2 clicked") == "false") {
+          if(pass2.value != "") sessionStorage.setItem("pass2 clicked", "true");
+        }
+        else if(pass1.value != pass2.value)
+        {
+           pass2.style.backgroundColor = "red";
+           msg_box.style.color = "red";
+           msg_box.innerHTML = "not match!";
+        }
+        else
+        {
+           pass2.style.backgroundColor = "green";
+           msg_box.style.color = "green";
+           msg_box.innerHTML = "match!";
+        }
+      }
+
+      function reg() {
+        var pass1 = document.getElementById("password1");
+        var pass2 = document.getElementById("password2");
+        var check = -1;
+        for(i = 1; i <= 4; ++i)
+         if(document.getElementById("checkbox" + i).checked) check = i - 1;
+
+        socket.removeAllListeners();
+        if($("#password1").val() == $("#password2").val())
+          socket.emit("reg", $("#account").val(), $("#password1").val(), $("#email").val(), check);
+        else socket.emit("reg", $("#account").val(), "", $("#email").val(), check);
+
+        socket.on("reg", function(acc_valid, pwd_valid, email_valid, robot) {
+          if(acc_valid == "valid" && pwd_valid && email_valid && !robot) window.location = "/reg_finish";
+
+          var msg_box = document.getElementById("valid msg");
+          switch(acc_valid)
+          {
+            case "valid":
+              msg_box.innerHTML = "";
+              break;
+
+            case "invalid":
+              msg_box.style.color = "red";
+              msg_box.innerHTML = "account has been used";
+              break;
+
+            case "empty":
+              msg_box.style.color = "red";
+              msg_box.innerHTML = "account cannot be empty";
+              break;
+          }
+
+          if(!pwd_valid) {
+            if($("#password1").val() == $("#password2").val())
+              document.getElementById("password empty msg").innerHTML = "password cannot be empty";
+            else {
+              document.getElementById("password empty msg").innerHTML = "";
+              document.getElementById("password msg").style.color = "red";
+              document.getElementById("password msg").innerHTML = "not match!";
+              pass2.style.backgroundColor = "red";
+              sessionStorage.setItem("pass2 clicked", "true");
+            }
+          }
+          else document.getElementById("password empty msg").innerHTML = "";
+
+          if(!email_valid) document.getElementById("email msg").innerHTML = "email cannot be empty";
+          else document.getElementById("email msg").innerHTML = "";
+
+          if(robot) document.getElementById("robotbox").style.display = "block";
+          else document.getElementById("robotbox").style.display = "none";
+        });
+      }
+
+    </script>
+
+  </body>
+</html>
